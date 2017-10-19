@@ -42,9 +42,6 @@ class QtXPS(QtWidgets.QWidget):
         self.e_width_txt.setValidator(QtGui.QDoubleValidator())
         self.output = QtWidgets.QPlainTextEdit()
         self.output.setReadOnly(True)
-        #self.keyPressed = QtCore.pyqtBoundSignal()
-        #self.keyPressed.connect(self.on_key)
-        print("Initialized")
         self.init_ui()
 
     def run_calc(self):
@@ -82,8 +79,12 @@ class QtXPS(QtWidgets.QWidget):
 
     def keyPressEvent(self, event):
         super(QtXPS, self).keyPressEvent(event)
-        if event.key() + 1 == QtCore.Qt.Key_Enter:
-            self.run_calc()
+        if isinstance(event, QtGui.QKeyEvent):
+            if event.type() == QtGui.QKeyEvent.KeyPress:
+                if not event.isAutoRepeat():
+                    if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+                        self.run_calc()
+                        print("Running")
 
 
 # The Qt application execution begins here
