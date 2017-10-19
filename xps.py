@@ -7,11 +7,11 @@ Created on Tue Sep 26 15:06:43 2017
 
 import numpy as np
 import sys
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 
 def print_lines(e_cen, e_width):
-    if (e_cen < 0):
+    if e_cen < 0:
         return "E Center is negative!"
     with open('xps_data.csv') as xps_table:
         header = xps_table.readline()
@@ -23,7 +23,7 @@ def print_lines(e_cen, e_width):
             elements.append(line[0:3])
     energies = np.genfromtxt('xps_data.csv', delimiter=',', skip_header=1, usecols=range(3, 27))
     energies[np.isnan(energies)] = -np.inf
-    condition = np.abs(energies - e_cen) < e_width # type: np.ndarray
+    condition = np.abs(energies - e_cen) < e_width  # type: np.ndarray
     output = "Name\tOrbital\tEnergy\n"
     for match in np.argwhere(condition):
         elem = match[0]
@@ -42,6 +42,9 @@ class QtXPS(QtWidgets.QWidget):
         self.e_width_txt.setValidator(QtGui.QDoubleValidator())
         self.output = QtWidgets.QPlainTextEdit()
         self.output.setReadOnly(True)
+        #self.keyPressed = QtCore.pyqtBoundSignal()
+        #self.keyPressed.connect(self.on_key)
+        print("Initialized")
         self.init_ui()
 
     def run_calc(self):
@@ -73,7 +76,14 @@ class QtXPS(QtWidgets.QWidget):
         self.setLayout(grid)
 
         self.setWindowTitle("XPS")
-        self.show()
+
+    def on_key(self):
+        print("You pressed enter!")
+
+    def keyPressEvent(self, event):
+        super(QtXPS, self).keyPressEvent(event)
+        if event.key() + 1 == QtCore.Qt.Key_Enter:
+            self.run_calc()
 
 
 # The Qt application execution begins here
@@ -84,6 +94,7 @@ def main():
     global app
     app = QtWidgets.QApplication(sys.argv)
     qt_xps = QtXPS()
+    qt_xps.show()
     sys.exit(app.exec_())
 
 
