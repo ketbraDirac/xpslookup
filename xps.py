@@ -7,7 +7,7 @@ Created on Tue Sep 26 15:06:43 2017
 
 import numpy as np
 import sys
-from PyQt5 import QtWidgets, QtGui, QtCore
+from qtpy import QtWidgets, QtGui, QtCore
 
 
 def print_lines(e_cen, e_width):
@@ -28,7 +28,10 @@ def print_lines(e_cen, e_width):
     for match in np.argwhere(condition):
         elem = match[0]
         orb = match[1]
-        output = output + str(elements[int(elem)][2]) + "\t" + str(orbitals[int(orb)]) + "\t" + str(energies[int(elem), int(orb)]) + "\n"
+        output = output + str(elements[int(elem)][2]) + \
+            "\t" + str(orbitals[int(orb)]) + \
+            "\t" + str(energies[int(elem), int(orb)]) + \
+            "\n"
     return output
 
 
@@ -37,11 +40,12 @@ class QtXPS(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.e_cen_txt = QtWidgets.QLineEdit()
-        self.e_width_txt = QtWidgets.QLineEdit()
         self.e_cen_txt.setValidator(QtGui.QDoubleValidator())
+        self.e_width_txt = QtWidgets.QLineEdit()
         self.e_width_txt.setValidator(QtGui.QDoubleValidator())
         self.output = QtWidgets.QPlainTextEdit()
         self.output.setReadOnly(True)
+        self.output.setFocusPolicy(QtCore.Qt.NoFocus)
         self.init_ui()
 
     def run_calc(self):
@@ -55,6 +59,8 @@ class QtXPS(QtWidgets.QWidget):
     def init_ui(self):
 
         go_button = QtWidgets.QPushButton("Calculate")
+        #go_button.setDefault(True)
+        go_button.setShortcut(QtCore.Qt.Key_Return)
         e_cen_label = QtWidgets.QLabel("E Center (eV)")
         e_width_label = QtWidgets.QLabel("E Width (eV)")
 
@@ -74,17 +80,14 @@ class QtXPS(QtWidgets.QWidget):
 
         self.setWindowTitle("XPS")
 
-    def on_key(self):
-        print("You pressed enter!")
-
-    def keyPressEvent(self, event):
-        super(QtXPS, self).keyPressEvent(event)
-        if isinstance(event, QtGui.QKeyEvent):
-            if event.type() == QtGui.QKeyEvent.KeyPress:
-                if not event.isAutoRepeat():
-                    if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
-                        self.run_calc()
-                        print("Running")
+    # def keyPressEvent(self, event):
+    #     super(QtXPS, self).keyPressEvent(event)
+    #     if isinstance(event, QtGui.QKeyEvent):
+    #         if event.type() == QtGui.QKeyEvent.KeyPress:
+    #             if not event.isAutoRepeat():
+    #                 if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
+    #                     self.run_calc()
+    #                     print("Running")
 
 
 # The Qt application execution begins here
