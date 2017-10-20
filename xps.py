@@ -57,14 +57,14 @@ class QtXPS(QtWidgets.QWidget):
             self.output.setPlainText("")
 
     def init_ui(self):
-
         go_button = QtWidgets.QPushButton("Calculate")
-        #go_button.setDefault(True)
-        go_button.setShortcut(QtCore.Qt.Key_Return)
+        return_shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_Return), self)
+        enter_shortcut = QtWidgets.QShortcut(QtCore.Qt.Key_Enter, self)
+        return_shortcut.activated.connect(self.run_calc)
+        enter_shortcut.activated.connect(self.run_calc)
+        go_button.clicked.connect(self.run_calc)
         e_cen_label = QtWidgets.QLabel("E Center (eV)")
         e_width_label = QtWidgets.QLabel("E Width (eV)")
-
-        go_button.clicked.connect(self.run_calc)
 
         grid = QtWidgets.QGridLayout()
         grid.setSpacing(10)
@@ -79,15 +79,6 @@ class QtXPS(QtWidgets.QWidget):
         self.setLayout(grid)
 
         self.setWindowTitle("XPS")
-
-    # def keyPressEvent(self, event):
-    #     super(QtXPS, self).keyPressEvent(event)
-    #     if isinstance(event, QtGui.QKeyEvent):
-    #         if event.type() == QtGui.QKeyEvent.KeyPress:
-    #             if not event.isAutoRepeat():
-    #                 if event.key() == QtCore.Qt.Key_Enter or event.key() == QtCore.Qt.Key_Return:
-    #                     self.run_calc()
-    #                     print("Running")
 
 
 # The Qt application execution begins here
